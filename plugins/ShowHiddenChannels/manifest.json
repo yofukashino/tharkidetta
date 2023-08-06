@@ -1,0 +1,14 @@
+{
+    "name": "ShowHiddenChannels",
+    "description": "A vendetta plugin which displays all hidden Channels, which can't be accessed due to Role Restrictions, this won't allow you to read them (impossible).",
+    "authors": [
+        {
+            "name": "Ahlawat",
+            "id": "1025214794766221384"
+        }
+    ],
+    "main": "src/index.ts",
+    "vendetta": {
+        "icon": "ic_guild_template"
+    }
+}
