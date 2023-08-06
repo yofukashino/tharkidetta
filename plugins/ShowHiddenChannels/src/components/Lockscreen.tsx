@@ -9,17 +9,17 @@ import {
   UserStore,
   GuildMemberStore,
   PermissionUtils,
-  Parser
+  Parser,
 } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import ClickableUser from "./ClickableUser";
 import * as Utils from "../lib/Utils";
-const { View, Text, ScrollView, Image } = General;
+const { View, Text, ScrollView, Image, Pressable } = General;
 
 export default React.memo((props: { channel: any; guild: any }) => {
   storage.showAdmin ??= defaultSettings.showAdmin;
   storage.showPerms ??= defaultSettings.showPerms;
-  const style = stylesheet.createThemedStyleSheet({    
+  const style = stylesheet.createThemedStyleSheet({
     image: {
       width: 100,
       height: 100,
@@ -69,15 +69,20 @@ export default React.memo((props: { channel: any; guild: any }) => {
       textAlign: "center",
     },
     topicContainer: {
-      backgroundColor: constants.ThemeColorMap?.BACKGROUND_TERTIARY ?? "#000000F0",
+      backgroundColor:
+        constants.ThemeColorMap?.BACKGROUND_TERTIARY ?? "#000000F0",
       maxWidth: "90%",
-      flexDirection: 'row',
-      flexWrap: 'wrap',   
       textAlign: "center",
       justifyContent: "center",
-      alignItems: 'center', 
+      alignItems: "center",
+    },
+    topicRowContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
     },
     topicText: {
+      margin: 5,
       color: constants.ThemeColorMap?.HEADER_SECONDARY ?? "#D1D1D1",
     },
     moreInfo: {
@@ -105,7 +110,7 @@ export default React.memo((props: { channel: any; guild: any }) => {
     roleContainer: {
       paddingTop: 2.5,
       flexDirection: "column",
-      justifyContent: 'center',
+      justifyContent: "center",
     },
     tagContainer: {
       marginTop: 5,
@@ -114,7 +119,7 @@ export default React.memo((props: { channel: any; guild: any }) => {
       padding: 10,
       borderRadius: 5,
       color: constants.ThemeColorMap?.HEADER_SECONDARY ?? "#D1D1D1",
-    },   
+    },
     tag: {
       color: constants.ThemeColorMap?.HEADER_PRIMARY ?? "#D1D1D1",
       fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
@@ -128,9 +133,70 @@ export default React.memo((props: { channel: any; guild: any }) => {
       paddingRight: 25,
     },
   });
+  const [channelTopic, setChannelTopic] = React.useState(null);
+  const [fullChannelTopic, setFullChannelTopic] = React.useState(false);
   const [channelSpecificRoles, setChannelSpecificRoles] = React.useState([]);
   const [adminRoles, setAdminRoles] = React.useState([]);
   const [userMentionComponents, setUserMentionComponents] = React.useState([]);
+  const parseTopicElements = () => {
+    const topic = Parser.parseTopic(props.channel.topic);
+    const currentRow = [];
+    const topicRows = topic.reduce((acc, item) => {
+      if (typeof item == "string" && item.includes("\n")) {
+        const subItems = item.split("\n");
+        acc.push(currentRow);
+        currentRow.length = 0;
+        currentRow.push(subItems[1]);
+        acc.push([subItems[0]]);
+      } else {
+        currentRow.push(item);
+      }
+      return acc;
+    }, []);
+
+    if (currentRow.length) topicRows.push(currentRow);
+    if (!fullChannelTopic) topicRows.splice(2, 0, "Click to View More...");
+    const topicElements = topicRows
+      .slice(0, fullChannelTopic ? topicRows.length : 2)
+      .map((row, index) => (
+        <View key={index} style={style.topicRowContainer}>
+          {row.map((item, itemIndex) =>
+            typeof item == "string" ? (
+              <Text
+                key={itemIndex}
+                style={
+                  item == "Click to View More..."
+                    ? {
+                        fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
+                        ...style.topicText,
+                      }
+                    : style.topicText
+                }
+              >
+                {item}
+              </Text>
+            ) : (
+              item
+            )
+          )}
+        </View>
+      ));
+
+    const topicContainer = (      
+      <Pressable
+      accessibilityRole="button"
+      style={style.container}
+      onPress={() => setFullChannelTopic(!fullChannelTopic)}
+      android_ripple={{
+        color: "#ffffff12",
+      }}
+      accessibilityLabel={"Channel Topic"}
+    >
+      <View style={style.topicContainer}>{...topicElements}</View>
+      </Pressable>
+    );
+    return setChannelTopic(topicContainer);
+  };
   const mapChannelRoles = () => {
     const channelRoleOverwrites = Object.values(
       props.channel.permissionOverwrites
@@ -219,7 +285,9 @@ export default React.memo((props: { channel: any; guild: any }) => {
 
     return setUserMentionComponents(mentionArray);
   };
-
+  React.useEffect(() => {
+    parseTopicElements();
+  }, [props.channel.topic, fullChannelTopic]);
   React.useEffect(() => {
     mapChannelRoles();
     mapAdminRoles();
@@ -228,87 +296,89 @@ export default React.memo((props: { channel: any; guild: any }) => {
 
   return (
     <View style={style.container}>
-    <ScrollView>
-      <View style={style.container}>
-        <Image
-          style={style.image}
-          source={{
-            uri: "https://tharki-god.github.io/files-random-host/unknown%20copy.png",
-          }}
-        />
-        <Text style={style.header}>This is a hidden channel.</Text>
-        <Text style={style.description}>
-          You cannot see the contents of this channel.          
-          {props.channel.topic &&
-            ` However, you may see its ${
-              props.channel.type !== 15 ? "topic" : "guidelines"
-            }.`}
-        </Text>
-        <View style={style.topicContainer}>{props.channel.topic && (
-          Parser.parseTopic(props.channel.topic).map(t => typeof t == "string" ? <Text style={style.topicText}>{t}</Text> : t)
-        )}</View>        
-        {props.channel.lastMessageId && (
-          <Text style={{ ...style.description, ...style.moreInfo }}>
-            Last message sent:{" "}
-            {Utils.getDateFromSnowflake(props.channel.lastMessageId)}
+      <ScrollView>
+        <View style={style.container}>
+          <Image
+            style={style.image}
+            source={{
+              uri: "https://tharki-god.github.io/files-random-host/unknown%20copy.png",
+            }}
+          />
+          <Text style={style.header}>This is a hidden channel.</Text>
+          <Text style={style.description}>
+            You cannot see the contents of this channel.
+            {props.channel.topic &&
+              ` However, you may see its ${
+                props.channel.type !== 15 ? "topic" : "guidelines"
+              }.`}
           </Text>
-        )}
-        {props.channel.rateLimitPerUser > 0 && (
-          <Text style={{ ...style.description, ...style.moreInfo }}>
-            Slowmode:
-            {Utils.convertToHMS(props.channel.rateLimitPerUser)}
-          </Text>
-        )}
-        {props.channel.nsfw && (
-          <Text style={{ ...style.description, ...style.moreInfo }}>
-            Age-Restricted Channel (NSFW) 🔞
-          </Text>
-        )}
-        {storage.showPerms && props.channel.permissionOverwrites && (
-          <View style={style.permissionContainer}>
-            <Text style={style.permissionHeader}>
-              Users that can see this channel:
-            </Text>
-            <View style={style.mentionContainer}>{userMentionComponents}</View>
-            <Text
-              style={{
-                ...style.permissionHeader,
-                ...style.permissionHeaderBorder,
-              }}
-            >
-              Channel-specific roles:
-            </Text>
-            <View style={style.roleContainer}>{channelSpecificRoles}</View>
-            {storage.showAdmin !== "false" &&
-              storage.showAdmin !== "channel" && (
-                <View>
-                  <Text
-                    style={{
-                      ...style.permissionHeader,
-                      ...style.permissionHeaderBorder,
-                    }}
-                  >
-                    Admin roles:
-                  </Text>
-                  <View style={style.roleContainer}>{adminRoles}</View>
-                </View>
-              )}
-          </View>
-        )}
-        {props.channel.type === 15 && props.channel.availableTags && (
-          <View style={style.tagContainer}>
+          {channelTopic}
+          {props.channel.lastMessageId && (
             <Text style={{ ...style.description, ...style.moreInfo }}>
-              Forum Tags:
+              Last message sent:{" "}
+              {Utils.getDateFromSnowflake(props.channel.lastMessageId)}
             </Text>
-            {props.channel.availableTags &&
-              props.channel.availableTags.length > 0 &&
-              props.channel.availableTags.map((tag) => (
-                <Text style={style.tag}>{`${tag.emojiName} ${tag.name}`}</Text>
-              ))}
-          </View>
-        )}
-      </View>
-    </ScrollView>
+          )}
+          {props.channel.rateLimitPerUser > 0 && (
+            <Text style={{ ...style.description, ...style.moreInfo }}>
+              Slowmode:
+              {Utils.convertToHMS(props.channel.rateLimitPerUser)}
+            </Text>
+          )}
+          {props.channel.nsfw && (
+            <Text style={{ ...style.description, ...style.moreInfo }}>
+              Age-Restricted Channel (NSFW) 🔞
+            </Text>
+          )}
+          {storage.showPerms && props.channel.permissionOverwrites && (
+            <View style={style.permissionContainer}>
+              <Text style={style.permissionHeader}>
+                Users that can see this channel:
+              </Text>
+              <View style={style.mentionContainer}>
+                {userMentionComponents}
+              </View>
+              <Text
+                style={{
+                  ...style.permissionHeader,
+                  ...style.permissionHeaderBorder,
+                }}
+              >
+                Channel-specific roles:
+              </Text>
+              <View style={style.roleContainer}>{channelSpecificRoles}</View>
+              {storage.showAdmin !== "false" &&
+                storage.showAdmin !== "channel" && (
+                  <View>
+                    <Text
+                      style={{
+                        ...style.permissionHeader,
+                        ...style.permissionHeaderBorder,
+                      }}
+                    >
+                      Admin roles:
+                    </Text>
+                    <View style={style.roleContainer}>{adminRoles}</View>
+                  </View>
+                )}
+            </View>
+          )}
+          {props.channel.type === 15 && props.channel.availableTags && (
+            <View style={style.tagContainer}>
+              <Text style={{ ...style.description, ...style.moreInfo }}>
+                Forum Tags:
+              </Text>
+              {props.channel.availableTags &&
+                props.channel.availableTags.length > 0 &&
+                props.channel.availableTags.map((tag) => (
+                  <Text
+                    style={style.tag}
+                  >{`${tag.emojiName} ${tag.name}`}</Text>
+                ))}
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 });
