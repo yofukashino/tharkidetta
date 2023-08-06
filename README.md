@@ -1,7 +1,11 @@
-# Vendetta Plugins Template
-This repo contains a template for creating [Vendetta](https://github.com/vendetta-mod/Vendetta) plugins.
+<div align="center">
+	<h1>tharkidetta</h1>
+</div>
+A collection of all my awesome plugins for Vendetta
 
-# How to install?
-Paste a plugin URL into the Plugins page of Vendetta, following a basic format of:
+# 📃 Plugin List
 
-https://`YOUR_GITHUB_USERNAME`.github.io/`REPO_NAME`/`PLUGIN_NAME`
+- ShowHiddenChannels — A vendetta plugin which displays all hidden Channels, which can't be accessed due to Role Restrictions, this won't allow you to read them (impossible).
+	- [<img alt="copy_link" src="https://img.shields.io/badge/copy_link-1e1e2e?style=for-the-badge" />](https://tharki-god.github.io/tharkidetta/ShowHiddenChannels) [<img alt="view_code" src="https://img.shields.io/badge/view_code-1e1e2e?style=for-the-badge" />](https://github.com/tharki-god/tharkidetta/tree/main/plugins/ShowHiddenChannels)
+
+
