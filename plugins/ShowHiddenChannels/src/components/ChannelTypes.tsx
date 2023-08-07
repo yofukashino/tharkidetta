@@ -19,7 +19,7 @@ import {
             type.split("_").length === 3 ? ` ${Utils.capitalizeFirst(type.split("_")[2])}` : ""
           } Channels`}
           value={storage.channels[type]}
-          onValueChange={(v) => (storage.channels[type] = v  && Utils.rerenderChannels())}
+          onValueChange={(v) => {storage.channels[type] = v; Utils.rerenderChannels();}}
           note=""
         />))}
       </ScrollView>
