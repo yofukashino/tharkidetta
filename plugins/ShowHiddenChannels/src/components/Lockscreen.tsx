@@ -159,7 +159,7 @@ export default React.memo((props: { channel: any; guild: any }) => {
     }
 
     if (currentRow.length) topicRows?.push(currentRow);
-    if (!fullChannelTopic) topicRows?.splice(2, 0, ["Click to View More..."]);
+    if (!fullChannelTopic && topicRows.length > 2) topicRows?.splice(2, 0, ["Click to View More..."]);
 
     const topicElements = topicRows
       ?.slice(0, fullChannelTopic ? topicRows.length : 3)
