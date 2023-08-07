@@ -75,11 +75,11 @@ export default React.memo((props: { channel: any; guild: any }) => {
     },
     topicRowContainer: {
       maxWidth: "89%",
-      flexDirection: "row",    
-      flexWrap: "wrap",        
+      flexDirection: "row",
+      flexWrap: "wrap",
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: 10,  
+      marginBottom: 10,
     },
     topicText: {
       margin: 5,
@@ -139,46 +139,52 @@ export default React.memo((props: { channel: any; guild: any }) => {
   const [adminRoles, setAdminRoles] = React.useState([]);
   const [userMentionComponents, setUserMentionComponents] = React.useState([]);
   const parseTopicElements = () => {
+    if (!props.channel.topic) return;
     const topic = Parser.parseTopic(props.channel.topic);
     const currentRow = [];
     const topicRows = [];
-    
-for (const topicItem of topic) {
-  if (typeof topicItem === "string" && topicItem.includes("\n")) {
-    const subItems = topicItem.split("\n");
-    for (const subItem of subItems) {
-      currentRow.push(subItem)
-      topicRows.push([...currentRow]);
-      currentRow.length = 0;
+
+    if (!topic) return;
+    for (const topicItem of topic) {
+      if (typeof topicItem === "string" && topicItem.includes("\n")) {
+        const subItems = topicItem.split("\n");
+        for (const subItem of subItems) {
+          currentRow.push(subItem);
+          topicRows.push([...currentRow]);
+          currentRow.length = 0;
+        }
+      } else {
+        currentRow.push(topicItem);
+      }
     }
-  } else {
-    currentRow.push(topicItem);
-  }
-}
-  
-    if (currentRow.length) topicRows.push(currentRow);
-    if (!fullChannelTopic) topicRows.splice(2, 0, ["Click to View More..."]);
-  
+
+    if (currentRow.length) topicRows?.push(currentRow);
+    if (!fullChannelTopic) topicRows?.splice(2, 0, ["Click to View More..."]);
+
     const topicElements = topicRows
-      .slice(0, fullChannelTopic ? topicRows.length : 3)
-      .map((row, index) => (
+      ?.slice(0, fullChannelTopic ? topicRows.length : 3)
+      ?.map((row, index) => (
         <View key={index} style={style.topicRowContainer}>
-          {row.map((item, itemIndex) => 
-            typeof item == "string" ? (<Text
-              key={`${itemIndex}${index}`}
-              style={
+          {row.map((item, itemIndex) =>
+            typeof item == "string" ? (
+              <Text
+                key={`${itemIndex}${index}`}
+                style={
                   item === "Click to View More..."
                     ? {
-                      fontWeight: "bold",
+                        fontWeight: "bold",
                         fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
                         ...style.topicText,
                       }
-                    : style.topicText 
-              }
-            >
-              {item}
-            </Text>
-          ) : item)}
+                    : style.topicText
+                }
+              >
+                {item}
+              </Text>
+            ) : (
+              item
+            )
+          )}
         </View>
       ));
     const topicContainer = (
@@ -194,7 +200,7 @@ for (const topicItem of topic) {
         <View style={style.topicContainer}>{topicElements}</View>
       </Pressable>
     );
-    
+
     setChannelTopic(topicContainer);
   };
   const mapChannelRoles = () => {
