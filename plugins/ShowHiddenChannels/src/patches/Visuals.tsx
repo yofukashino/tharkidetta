@@ -88,7 +88,6 @@ export const patchChannelItem = () => {
       const currentChannelId = SelectedChannelStore.getChannelId(currentGuildId);
       const currentChannel = ChannelStore.getChannel(currentChannelId);
       const screens = Utils.findInTree(res, (c) => c?.CHANNEL?.headerRight, {});
-      console.log(currentChannel.name, screens)
       if (currentChannel?.isHidden?.() && screens?.CHANNEL) {
         screens.CHANNEL.headerRight = () => null;
         screens.CHANNEL.headerTitle = () => null;

@@ -34,7 +34,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Lock Icon"
         onPress={() => {
-          storage.hiddenChannelIcon = "lock" && Utils.rerenderChannels();
+          storage.hiddenChannelIcon = "lock";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.hiddenChannelIcon === "lock"}
@@ -43,7 +44,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Eye Icon"
         onPress={() => {
-          storage.hiddenChannelIcon = "eye" && Utils.rerenderChannels();
+          storage.hiddenChannelIcon = "eye";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.hiddenChannelIcon === "eye"}
@@ -52,7 +54,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="None"
         onPress={() => {
-          storage.hiddenChannelIcon = "false" && Utils.rerenderChannels();
+          storage.hiddenChannelIcon = "false";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.hiddenChannelIcon === "false"}
@@ -81,7 +84,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Hidden Channels in the native Discord order (default)"
         onPress={() => {
-          storage.sort = "native" && Utils.rerenderChannels();
+          storage.sort = "native";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.sort === "native"}
@@ -90,7 +94,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Hidden Channels at the bottom of the Category"
         onPress={() => {
-          storage.sort = "bottom" && Utils.rerenderChannels();
+          storage.sort = "bottom";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.sort === "bottom"}
@@ -99,7 +104,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Hidden Channels in a separate Category at the bottom"
         onPress={() => {
-          storage.sort = "extra" && Utils.rerenderChannels();
+          storage.sort = "extra";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.sort === "extra"}
@@ -128,7 +134,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Show only channel specific roles"
         onPress={() => {
-          storage.showAdmin = "channel" && Utils.rerenderChannels();
+          storage.showAdmin = "channel";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.showAdmin === "channel"}
@@ -137,7 +144,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Include Bot Roles"
         onPress={() => {
-          storage.showAdmin = "include" && Utils.rerenderChannels();
+          storage.showAdmin = "include";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.showAdmin === "include"}
@@ -146,7 +154,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Exclude Bot Roles"
         onPress={() => {
-          storage.showAdmin = "exclude" && Utils.rerenderChannels();
+          storage.showAdmin = "exclude";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.showAdmin === "exclude"}
@@ -155,7 +164,8 @@ export default React.memo(() => {
       <FormRadioRow
         label="Don't Show Administrator Roles"
         onPress={() => {
-          storage.showAdmin = "false" && Utils.rerenderChannels();
+          storage.showAdmin = "false";
+          Utils.rerenderChannels();
         }}
         trailing={<FormRow.Arrow />}
         selected={storage.showAdmin === "false"}

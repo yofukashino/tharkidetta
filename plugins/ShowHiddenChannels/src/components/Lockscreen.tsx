@@ -72,14 +72,14 @@ export default React.memo((props: { channel: any; guild: any }) => {
       backgroundColor:
         constants.ThemeColorMap?.BACKGROUND_TERTIARY ?? "#000000F0",
       maxWidth: "90%",
-      textAlign: "center",
-      justifyContent: "center",
-      alignItems: "center",
     },
     topicRowContainer: {
-      flexDirection: "row",
+      maxWidth: "89%",
+      flexDirection: "row",    
+      flexWrap: "wrap",        
       justifyContent: "center",
       alignItems: "center",
+      marginBottom: 10,  
     },
     topicText: {
       margin: 5,
@@ -141,61 +141,61 @@ export default React.memo((props: { channel: any; guild: any }) => {
   const parseTopicElements = () => {
     const topic = Parser.parseTopic(props.channel.topic);
     const currentRow = [];
-    const topicRows = topic.reduce((acc, item) => {
-      if (typeof item == "string" && item.includes("\n")) {
-        const subItems = item.split("\n");
-        acc.push(currentRow);
-        currentRow.length = 0;
-        currentRow.push(subItems[1]);
-        acc.push([subItems[0]]);
-      } else {
-        currentRow.push(item);
-      }
-      return acc;
-    }, []);
-
+    const topicRows = [];
+    
+for (const topicItem of topic) {
+  if (typeof topicItem === "string" && topicItem.includes("\n")) {
+    const subItems = topicItem.split("\n");
+    for (const subItem of subItems) {
+      currentRow.push(subItem)
+      topicRows.push([...currentRow]);
+      currentRow.length = 0;
+    }
+  } else {
+    currentRow.push(topicItem);
+  }
+}
+  
     if (currentRow.length) topicRows.push(currentRow);
-    if (!fullChannelTopic) topicRows.splice(2, 0, "Click to View More...");
+    if (!fullChannelTopic) topicRows.splice(2, 0, ["Click to View More..."]);
+  
     const topicElements = topicRows
-      .slice(0, fullChannelTopic ? topicRows.length : 2)
+      .slice(0, fullChannelTopic ? topicRows.length : 3)
       .map((row, index) => (
         <View key={index} style={style.topicRowContainer}>
-          {row.map((item, itemIndex) =>
-            typeof item == "string" ? (
-              <Text
-                key={itemIndex}
-                style={
-                  item == "Click to View More..."
+          {row.map((item, itemIndex) => 
+            typeof item == "string" ? (<Text
+              key={`${itemIndex}${index}`}
+              style={
+                  item === "Click to View More..."
                     ? {
+                      fontWeight: "bold",
                         fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
                         ...style.topicText,
                       }
-                    : style.topicText
-                }
-              >
-                {item}
-              </Text>
-            ) : (
-              item
-            )
-          )}
+                    : style.topicText 
+              }
+            >
+              {item}
+            </Text>
+          ) : item)}
         </View>
       ));
-
-    const topicContainer = (      
+    const topicContainer = (
       <Pressable
-      accessibilityRole="button"
-      style={style.container}
-      onPress={() => setFullChannelTopic(!fullChannelTopic)}
-      android_ripple={{
-        color: "#ffffff12",
-      }}
-      accessibilityLabel={"Channel Topic"}
-    >
-      <View style={style.topicContainer}>{...topicElements}</View>
+        accessibilityRole="button"
+        style={style.container}
+        onPress={() => setFullChannelTopic(!fullChannelTopic)}
+        android_ripple={{
+          color: "#ffffff12",
+        }}
+        accessibilityLabel={"Channel Topic"}
+      >
+        <View style={style.topicContainer}>{topicElements}</View>
       </Pressable>
     );
-    return setChannelTopic(topicContainer);
+    
+    setChannelTopic(topicContainer);
   };
   const mapChannelRoles = () => {
     const channelRoleOverwrites = Object.values(
