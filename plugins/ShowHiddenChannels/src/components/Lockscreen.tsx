@@ -293,7 +293,7 @@ export default React.memo((props: { channel: any; guild: any }) => {
   };
   React.useEffect(() => {
     parseTopicElements();
-  }, [props.channel.topic, fullChannelTopic]);
+  }, [props.channel.id, props.channel.topic, fullChannelTopic]);
   React.useEffect(() => {
     mapChannelRoles();
     mapAdminRoles();
