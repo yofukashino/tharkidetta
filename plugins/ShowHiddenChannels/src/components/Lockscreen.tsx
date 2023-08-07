@@ -139,12 +139,12 @@ export default React.memo((props: { channel: any; guild: any }) => {
   const [adminRoles, setAdminRoles] = React.useState([]);
   const [userMentionComponents, setUserMentionComponents] = React.useState([]);
   const parseTopicElements = () => {
-    if (!props.channel.topic) return;
+    if (!props.channel.topic) return setChannelTopic(null);;
     const topic = Parser.parseTopic(props.channel.topic);
     const currentRow = [];
     const topicRows = [];
 
-    if (!topic) return;
+    if (!topic) return setChannelTopic(null);;
     for (const topicItem of topic) {
       if (typeof topicItem === "string" && topicItem.includes("\n")) {
         const subItems = topicItem.split("\n");
@@ -201,7 +201,7 @@ export default React.memo((props: { channel: any; guild: any }) => {
       </Pressable>
     );
 
-    setChannelTopic(topicContainer);
+    return setChannelTopic(topicContainer);
   };
   const mapChannelRoles = () => {
     const channelRoleOverwrites = Object.values(
