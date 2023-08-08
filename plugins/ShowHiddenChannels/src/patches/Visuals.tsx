@@ -16,7 +16,7 @@ export const patchChannelItem = () => {
         View,
       function (_args, res) {
         const channelItem = Utils.findInReactTree(res, (c) => c.props?.channel && c.props?.isRulesChannel && typeof c.type.type === "function");
-        if (!channelItem) return res;
+        if (typeof channelItem?.type?.type !== "function") return res;
 
         const channelItemPatch = Patcher.after('type', channelItem.type, function ([{ channel }], res) {
           if (!channel?.isHidden?.()) return res;
@@ -42,6 +42,7 @@ export const patchChannelItem = () => {
     
       const container = Utils.findInReactTree(res, (c) => c !== res && Array.isArray(c.props?.children));      
       container?.props?.children?.push?.(<HiddenChannelIcon/>);
+      if (!container) return res;
       res.props.onPress = () => null;
       for (const baseChild of container.props.children) {
         if (baseChild?.props?.mode === ChannelItem.ChannelModes.LOCKED) {
@@ -107,7 +108,7 @@ export const patchChannelItem = () => {
 
       const MainDrawersComponent = Utils.findInReactTree(res, (c) => c?.props?.guildId && c?.props?.channelId && typeof c?.type?.type === "function");    
 
-      if (!MainDrawersComponent?.type) return res;
+      if (typeof MainDrawersComponent?.type?.type !== "function") return res;
       const mainDrawersComponentPatch = Patcher.after('type', MainDrawersComponent.type, function ([{channelId}], res) {
 
         const channel = ChannelStore.getChannel(channelId);
