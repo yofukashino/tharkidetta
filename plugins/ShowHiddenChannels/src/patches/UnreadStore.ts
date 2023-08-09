@@ -4,7 +4,7 @@ import { ChannelStore, UnreadStore } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import { patches } from "./index";
 export default () => {
-    storage.stopMarkingUnread ??= defaultSettings.stopMarkingUnread;
+    storage.stopMarkingUnread ??= defaultSettings.stopMarkingUnread;    
   const guildChannelStatePatch = Patcher.after("getGuildChannelUnreadState", UnreadStore, (args, res) => {
     return args[0]?.isHidden?.() && !storage.stopMarkingUnread ? { mentionCount: 0, hasNotableUnread: false } : res;
   });
