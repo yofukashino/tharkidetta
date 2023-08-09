@@ -18,23 +18,23 @@ export default () => {
   });
   patches.push(unreadCountPatch);
   const notableUnreadPatch = Patcher.after("hasNotableUnread", UnreadStore, (args, res) => {
-    return !storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
+    return storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
   });
   patches.push(notableUnreadPatch);
   const relevendUnreadPatch = Patcher.after("hasRelevantUnread", UnreadStore, (args, res) => {
-    return !storage.stopMarkingUnread ? res : res && !args[0].isHidden?.();
+    return storage.stopMarkingUnread ? res : res && !args[0].isHidden?.();
   });
   patches.push(relevendUnreadPatch);
   const trackedUnreadPatch = Patcher.after("hasTrackedUnread", UnreadStore, (args, res) => {
-    return !storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
+    return storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
   });
   patches.push(trackedUnreadPatch);
   const unreadPatch = Patcher.after("hasUnread", UnreadStore, (args, res) => {
-    return !storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
+    return storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
   });
   patches.push(unreadPatch);
   const unreadPinsPatch = Patcher.after("hasUnreadPins", UnreadStore, (args, res) => {
-    return !storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
+    return storage.stopMarkingUnread ? res : res && !ChannelStore.getChannel(args[0])?.isHidden?.();
   });
   patches.push(unreadPinsPatch);
 };
