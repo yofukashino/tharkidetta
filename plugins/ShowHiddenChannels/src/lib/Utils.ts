@@ -1,7 +1,8 @@
-import Patcher from "@vendetta/patcher";
 import { common } from "@vendetta/metro";
 import Utils from "@vendetta/utils";
 import { DiscordConstants, ChannelStore } from "./requiredModules";
+
+
 export const capitalizeFirst = (string) =>
   `${string.charAt(0).toUpperCase()}${string.substring(1).toLowerCase()}`;
 

@@ -24,5 +24,4 @@ export const ProfileActions = Object.assign({}, Metro.findByProps("fetchProfile"
 export const PermissionUtils = Metro.findByProps("isRoleHigher","makeEveryoneOverwrite");
 export const Parser = Metro.findByProps("parseTopic", "parseInlineReply");
 export const IconUtils = Metro.findByProps("getGuildIconURL", "getDefaultAvatarURL");
-export const CategoryUtil = Metro.findByProps("categoryCollapse", "categoryCollapseAll");
 export const TransictionUtil = Metro.findByProps("transitionToChannel", "transitionToPrivateChannel");

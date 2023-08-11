@@ -4,7 +4,6 @@ import {
   CategoryStore,
   ChannelStore,
   DiscordConstants,
-  CategoryUtil,
   GuildChannelsStore,
   ChannelRecordBase,
   ChannelListStore,
@@ -14,87 +13,23 @@ import { patches } from "./index";
 import * as MyUtils from "../lib/Utils";
 
 export default () => {
-  storage.collapsed ??= defaultSettings.collapsed;
   storage.alwaysCollapse ??= defaultSettings.alwaysCollapse;
   storage.sort ??= defaultSettings.sort;
   storage.blacklistedGuilds ??= defaultSettings.blacklistedGuilds;
   storage.shouldShowEmptyCategory ??= defaultSettings.shouldShowEmptyCategory;
 
-  const getCollapsedCategoryPatch = Patcher.after(
-    "getCollapsedCategories",
-    CategoryStore,
-    (_args, res) => {
-      return { ...res, ...storage.collapsed };
-    }
-  );
 
-  patches.push(getCollapsedCategoryPatch);
 
   const isCollapsedPatch = Patcher.after(
     "isCollapsed",
     CategoryStore,
     (args, res) => {
-      if (!args[0]?.endsWith("hidden")) return res;
-
-      if (!storage.alwaysCollapse) return storage.collapsed[args[0]];
-
-      return storage.alwaysCollapse && storage.collapsed[args[0]] !== false;
+      if (!args[0]?.endsWith("hidden") || !storage.alwaysCollapse) return res;
+      return storage.alwaysCollapse && res;
     }
   );
 
   patches.push(isCollapsedPatch);
-
-  const collapsePatch = Patcher.after(
-    "categoryCollapse",
-    CategoryUtil,
-    (args, res) => {
-      if (!args[0]?.endsWith("hidden") || storage.collapsed[args[0]])
-        return res;
-      const collapsed = storage.collapsed;
-      collapsed[args[0]] = true;
-      storage.collapsed = collapsed;
-    }
-  );
-
-  patches.push(collapsePatch);
-
-  const collapseAllPatch = Patcher.after(
-    "categoryCollapseAll",
-    CategoryUtil,
-    (args, res) => {
-      if (storage.collapsed[`${args[0]}_hidden`]) return res;
-      const collapsed = storage.collapsed;
-      collapsed[`${args[0]}_hidden`] = true;
-      storage.collapsed = collapsed;
-    }
-  );
-
-  patches.push(collapseAllPatch);
-
-  const expandPatch = Patcher.after(
-    "categoryExpand",
-    CategoryUtil,
-    (args, res) => {
-      if (!args[0]?.endsWith("hidden")) return res;
-      const collapsed = storage.collapsed;
-      collapsed[args[0]] = false;
-      storage.collapsed = collapsed;
-    }
-  );
-
-  patches.push(expandPatch);
-
-  const expandAllPatch = Patcher.after(
-    "categoryExpandAll",
-    CategoryUtil,
-    (args) => {
-      const collapsed = storage.collapsed;
-      collapsed[`${args[0]}_hidden`] = false;
-      storage.collapsed = collapsed;
-    }
-  );
-
-  patches.push(expandAllPatch);
 
   const guildChannelsStorePatch = Patcher.after(
     "getChannels",
@@ -129,7 +64,26 @@ export default () => {
 
   patches.push(guildChannelsStorePatch);
 
-  const channelStorePatch = Patcher.after(
+  const channelStorePatch = Patcher.after("getChannel", ChannelStore, (args, res) => {
+    if (
+      storage.sort !== "extra" || storage.blacklistedGuilds[
+        args[0]?.replace("_hidden", "")
+      ] ||
+      !args[0]?.endsWith("_hidden")
+    )
+      return res;
+    const HiddenCategoryChannel = new ChannelRecordBase({
+      guild_id: args[0]?.replace("_hidden", ""),
+      id: args[0],
+      name: "Hidden Channels",
+      type: DiscordConstants.ChannelTypes.GUILD_CATEGORY,
+    });
+    return HiddenCategoryChannel;
+  });
+
+  patches.push(channelStorePatch);
+
+  const guildChannelsChannelStorePatch = Patcher.after(
     "getMutableGuildChannelsForGuild",
     ChannelStore,
     (args, res) => {
@@ -159,7 +113,7 @@ export default () => {
     }
   );
 
-  patches.push(channelStorePatch);
+  patches.push(guildChannelsChannelStorePatch);
 
   //* Custom category or sorting order
   const channelListStoreGetGuildPatch = Patcher.after(
@@ -199,13 +153,9 @@ export default () => {
               return [id, channel];
             })
           );
-
-          HiddenCategory.isCollapsed =
-            storage.alwaysCollapse && storage.collapsed[hiddenId] !== false;
-          HiddenCategory.shownChannelIds =
-            storage.collapsed[hiddenId] ||
-            res.guildChannels.collapsedCategoryIds[hiddenId] ||
-            HiddenCategory.isCollapsed
+            
+          HiddenCategory.isCollapsed = Boolean(res.guildChannels.collapsedCategoryIds[hiddenId]);
+          HiddenCategory.shownChannelIds = res.guildChannels.collapsedCategoryIds[hiddenId] || HiddenCategory.isCollapsed
               ? []
               : hiddenChannels.channels
                   .sort((x: any, y: any) => {
@@ -214,6 +164,8 @@ export default () => {
                     return xPos < yPos ? -1 : xPos > yPos ? 1 : 0;
                   })
                   .map((m: any) => m.id);
+
+                
           break;
         }
       }
@@ -231,4 +183,5 @@ export default () => {
   );
 
   patches.push(channelListStoreGetGuildPatch);
+  
 };
