@@ -20,9 +20,8 @@ export const patchChannelItem = () => {
 
         const channelItemPatch = Patcher.after('type', channelItem.type, function ([{ channel }], res) {
           if (!channel?.isHidden?.()) return res;
-
-          const container = Utils.findInReactTree(res, (c) => c !== res && Array.isArray(c.props?.children));
-          container?.props?.children?.push(<HiddenChannelIcon/>) 
+          
+          res?.props?.children?.push(<HiddenChannelIcon/>) 
   
           return res;
         });
