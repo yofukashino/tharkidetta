@@ -15,7 +15,7 @@ export const patchChannelItem = () => {
         "render",
         View,
       function (_args, res) {
-        const channelItem = Utils.findInReactTree(res, (c) => c.props?.channel && c.props?.isRulesChannel && typeof c.type.type === "function");
+        const channelItem = Utils.findInReactTree(res, (c) => c?.props?.channel && c?.props?.channel?.getGuildId?.() !== null && c?.props?.isRulesChannel && typeof c?.type?.type === "function");
         if (typeof channelItem?.type?.type !== "function") return res;
 
         const channelItemPatch = Patcher.after('type', channelItem.type, function ([{ channel }], res) {
@@ -86,6 +86,9 @@ export const patchChannelItem = () => {
     const navigatorPatch = Patcher.after('default', Navigator, function (_args, res) {
       
       const currentGuildId = SelectedGuildStore.getGuildId();
+      if (!currentGuildId) {
+        return res;
+      }
       const currentChannelId = SelectedChannelStore.getChannelId(currentGuildId);
       const currentChannel = ChannelStore.getChannel(currentChannelId);
       const screens = Utils.findInTree(res, (c) => c?.CHANNEL?.headerRight, {});
