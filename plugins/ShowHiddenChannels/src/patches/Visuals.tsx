@@ -1,4 +1,5 @@
 import Patcher from "@vendetta/patcher";
+import Assets from "@vendetta/ui/assets";
 import Utils from "@vendetta/utils";
 import {General} from "@vendetta/ui/components"
 import { storage } from "@vendetta/plugin";
@@ -15,20 +16,26 @@ export const patchChannelItem = () => {
         "render",
         View,
       function (_args, res) {
-        const channelItem = Utils.findInReactTree(res, (c) => c?.props?.channel && c?.props?.channel?.getGuildId?.() !== null && c?.props?.isRulesChannel && typeof c?.type?.type === "function");
-        if (typeof channelItem?.type?.type !== "function") return res;
-
+        const channelItem = Utils.findInReactTree(res, (c) => c?.props?.channel  && !c?.props?.channel?.isCategory?.() && c?.props?.isRulesChannel !== null);
+        if (typeof channelItem?.type?.type !== "function") {
+          return res;
+        }              
         const channelItemPatch = Patcher.after('type', channelItem.type, function ([{ channel }], res) {
-          if (!channel?.isHidden?.()) return res;
-          
-          res?.props?.children?.push(<HiddenChannelIcon/>) 
+
+          if (!channel?.isHidden?.()) {
+            return res;
+          }
+
+          const container = Utils.findInReactTree(res, (c) => c !== res && Array.isArray(c.props?.children)) /* ?? res */;      
+          container?.props?.children?.push?.(<HiddenChannelIcon/>);
   
           return res;
         });
 
         patches.push(channelItemPatch);
 
-        unpatchView();
+        unpatchView?.();
+        return res;
       },
     ); 
 
@@ -47,7 +54,7 @@ export const patchChannelItem = () => {
         if (baseChild?.props?.mode === ChannelItem.ChannelModes.LOCKED) {
           baseChild.props.mode =  storage.faded ? ChannelItem.ChannelModes.MUTED : ChannelItem.ChannelModes.DEFAULT;
           if (baseChild.props.source)
-          baseChild.props.source = 169;
+          baseChild.props.source = Assets.getAssetIDByName("ic_voice_channel_locked_24px");
         }
       }
 
@@ -110,10 +117,12 @@ export const patchChannelItem = () => {
 
       const MainDrawersComponent = Utils.findInReactTree(res, (c) => c?.props?.guildId && c?.props?.channelId && typeof c?.type?.type === "function");    
 
-      if (typeof MainDrawersComponent?.type?.type !== "function") return res;
-      const mainDrawersComponentPatch = Patcher.after('type', MainDrawersComponent.type, function ([{channelId}], res) {
+      if (typeof MainDrawersComponent?.type?.type !== "function") {
+        return res;
+      }
 
-        const channel = ChannelStore.getChannel(channelId);
+      const mainDrawersComponentPatch = Patcher.after('type', MainDrawersComponent.type, function ([args], res) {
+        const channel = ChannelStore.getChannel(args?.channelId);
         if (channel?.isHidden?.()) {
           res.props.hasMembersDrawer = false;
         }    
@@ -121,9 +130,9 @@ export const patchChannelItem = () => {
     return res;
   });
 
-  patches.push(mainDrawersComponentPatch); 
+  patches.push(mainDrawersComponentPatch);  
 
-  unpatchDrawerTabbar();
+  unpatchDrawerTabbar?.(); 
   return res;
   });
 

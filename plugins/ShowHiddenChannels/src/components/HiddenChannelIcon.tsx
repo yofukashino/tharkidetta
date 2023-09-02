@@ -1,9 +1,9 @@
 import {
   React,
   stylesheet,
-  constants,
 } from "@vendetta/metro/common";
 import { General } from "@vendetta/ui/components";
+import { semanticColors } from "@vendetta/ui";
 import { storage } from "@vendetta/plugin";
 import { SVG } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
@@ -18,7 +18,7 @@ export default React.memo((props: { height?: number; width?: number }) => {
       alignItems: "center",
       marginLeft: 5,
     },
-    svg: {color: storage.faded ? constants?.ThemeColorMap?.INTERACTIVE_MUTED ?? "#D1D1D1D1" : constants?.ThemeColorMap?.CHANNELS_DEFAULT ?? "#D1D1D1",}   
+    svg: {color: storage.faded ? semanticColors?.INTERACTIVE_MUTED : semanticColors?.CHANNELS_DEFAULT}   
       
     
   });

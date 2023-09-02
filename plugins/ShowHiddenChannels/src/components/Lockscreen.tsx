@@ -1,5 +1,6 @@
 import { React, stylesheet, constants } from "@vendetta/metro/common";
 import { General } from "@vendetta/ui/components";
+import { semanticColors } from "@vendetta/ui";
 import { storage } from "@vendetta/plugin";
 import {
   ThemedRolePill,
@@ -31,10 +32,10 @@ export default React.memo((props: { channel: any; guild: any }) => {
       alignItems: "center",
       justifyContent: "center",
       backgroundColor:
-        constants.ThemeColorMap?.BACKGROUND_PRIMARY ?? "#00000000",
+        semanticColors?.BACKGROUND_PRIMARY ?? "#00000000",
     },
     none: {
-      color: constants.ThemeColorMap?.HEADER_SECONDARY ?? "#D1D1D1",
+      color: semanticColors?.HEADER_SECONDARY ?? "#D1D1D1",
       fontSize: 14,
       fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
       marginLeft: 2.5,
@@ -49,16 +50,16 @@ export default React.memo((props: { channel: any; guild: any }) => {
       alignItems: "center",
       justifyContent: "center",
       backgroundColor:
-        constants.ThemeColorMap?.BACKGROUND_SECONDARY_ALT ?? "#00000010",
+        semanticColors?.BACKGROUND_SECONDARY_ALT ?? "#00000010",
     },
     header: {
-      color: constants.ThemeColorMap?.HEADER_PRIMARY ?? "#D1D1D1",
+      color: semanticColors?.HEADER_PRIMARY ?? "#D1D1D1",
       fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
       fontWeight: "bold",
       fontSize: 24,
     },
     description: {
-      color: constants.ThemeColorMap?.HEADER_SECONDARY ?? "#D1D1D1",
+      color: semanticColors?.HEADER_SECONDARY ?? "#D1D1D1",
       fontSize: 16,
       fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
       marginLeft: 2.5,
@@ -70,7 +71,7 @@ export default React.memo((props: { channel: any; guild: any }) => {
     },
     topicContainer: {
       backgroundColor:
-        constants.ThemeColorMap?.BACKGROUND_TERTIARY ?? "#000000F0",
+        semanticColors?.BACKGROUND_TERTIARY ?? "#000000F0",
       maxWidth: "90%",
     },
     topicRowContainer: {
@@ -83,13 +84,13 @@ export default React.memo((props: { channel: any; guild: any }) => {
     },
     topicText: {
       margin: 5,
-      color: constants.ThemeColorMap?.HEADER_SECONDARY ?? "#D1D1D1",
+      color: semanticColors?.HEADER_SECONDARY ?? "#D1D1D1",
     },
     moreInfo: {
       marginTop: 5,
     },
     permissionHeader: {
-      color: constants.ThemeColorMap?.HEADER_SECONDARY ?? "#D1D1D1",
+      color: semanticColors?.HEADER_SECONDARY ?? "#D1D1D1",
       fontSize: 16,
       fontFamily: constants.Fonts?.PRIMARY_MEDIUM,
       marginLeft: 2.5,
@@ -115,13 +116,13 @@ export default React.memo((props: { channel: any; guild: any }) => {
     tagContainer: {
       marginTop: 5,
       backgroundColor:
-        constants.ThemeColorMap?.BACKGROUND_SECONDARY_ALT ?? "#00000010",
+        semanticColors?.BACKGROUND_SECONDARY_ALT ?? "#00000010",
       padding: 10,
       borderRadius: 5,
-      color: constants.ThemeColorMap?.HEADER_SECONDARY ?? "#D1D1D1",
+      color: semanticColors?.HEADER_SECONDARY ?? "#D1D1D1",
     },
     tag: {
-      color: constants.ThemeColorMap?.HEADER_PRIMARY ?? "#D1D1D1",
+      color: semanticColors?.HEADER_PRIMARY ?? "#D1D1D1",
       fontFamily: constants.Fonts?.PRIMARY_SEMIBOLD,
       fontWeight: "bold",
       fontSize: 16,

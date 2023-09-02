@@ -15,7 +15,7 @@ export default {
         Visuals();
     },
     unpatchAll: () => {
-        patches.forEach(up => up());
+        patches.forEach(up => up?.());
         patches.length = 0;
     },
 }
