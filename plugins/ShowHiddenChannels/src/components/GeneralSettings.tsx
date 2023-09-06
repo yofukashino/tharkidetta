@@ -25,6 +25,7 @@ export default React.memo(() => {
         subLabel="What icon to show as indicator for hidden channels."
         leading={
           <HiddenChannelIcon
+            settings={true}
             width={24}
             height={24}
             key={storage.hiddenChannelIcon}

@@ -26,7 +26,7 @@ export const patchChannelItem = () => {
             return res;
           }
 
-          const container = Utils.findInReactTree(res, (c) => c !== res && Array.isArray(c.props?.children)) /* ?? res */;      
+          const container = Utils.findInReactTree(res, (c) => c !== res && Array.isArray(c.props?.children)) ?? res;      
           container?.props?.children?.push?.(<HiddenChannelIcon/>);
   
           return res;
@@ -46,7 +46,7 @@ export const patchChannelItem = () => {
       const { channel } = Utils.findInTree(args[0], (c) => c?.channel, {}) ?? {};
       if (!channel?.isHidden?.()) return res;
     
-      const container = Utils.findInReactTree(res, (c) => c !== res && Array.isArray(c.props?.children));      
+      const container = Utils.findInReactTree(res, (c) => c !== res && Array.isArray(c?.props?.children));      
       container?.props?.children?.push?.(<HiddenChannelIcon/>);
       if (!container) return res;
       res.props.onPress = () => null;
@@ -81,7 +81,7 @@ export const patchChannelItem = () => {
       UserGuildSettingsStore,      
       (args, res) => {
         const Channel = ChannelStore.getChannel(args[1]);
-        if (!storage.faded || !Channel?.isHidden()) return res;
+        if (!storage.faded || !Channel?.isHidden?.()) return res;
         return true;
       },
     );
@@ -91,7 +91,7 @@ export const patchChannelItem = () => {
 
     const navigatorPatch = Patcher.after('default', Navigator, function (_args, res) {
       
-      const currentGuildId = SelectedGuildStore.getGuildId();
+      const currentGuildId = SelectedGuildStore?.getGuildId?.();
       if (!currentGuildId) {
         return res;
       }
@@ -103,7 +103,7 @@ export const patchChannelItem = () => {
         screens.CHANNEL.headerTitle = () => null;
         screens.CHANNEL.render = () => <Lockscreen      
         channel={currentChannel}
-        guild={GuildStore.getGuild(currentChannel.guild_id)}      
+        guild={GuildStore?.getGuild?.(currentChannel.guild_id)}      
     />;
       }     
       return res;
@@ -122,8 +122,8 @@ export const patchChannelItem = () => {
       }
 
       const mainDrawersComponentPatch = Patcher.after('type', MainDrawersComponent.type, function ([args], res) {
-        const channel = ChannelStore.getChannel(args?.channelId);
-        if (channel?.isHidden?.()) {
+        const channel = ChannelStore.getChannel?.(args?.channelId);
+        if (channel?.isHidden?.() && res?.props?.hasMembersDrawer) {
           res.props.hasMembersDrawer = false;
         }    
 

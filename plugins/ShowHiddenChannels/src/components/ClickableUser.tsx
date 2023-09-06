@@ -1,8 +1,8 @@
 import { React, stylesheet, constants } from "@vendetta/metro/common";
 import { General } from "@vendetta/ui/components";
-import { ProfileActions } from "../lib/requiredModules";
+import { ProfileActions, GuildMemberRow, PresenceStore } from "../lib/requiredModules";
 const { View, Text, Image, Pressable } = General;
-export default React.memo((props: { user: any; guild: any }) => {
+export default React.memo((props: { user: any; guild: any; channel: any; member: any; }) => {
   const style = stylesheet.createThemedStyleSheet({
     container: {
       minHeight: 45,
@@ -37,7 +37,17 @@ export default React.memo((props: { user: any; guild: any }) => {
       color: constants.ThemeColorMap?.HEADER_SECONDARY ?? '#D1D1D1',
     },
   });
-  return (
+  return GuildMemberRow ? (<GuildMemberRow
+   {...props.member}
+    user={props.user}
+    status={PresenceStore.getStatus(props.user.id)}
+    activities={PresenceStore.getActivities(props.user.id)}
+    applicationStream={null}
+    isOwner={false}
+    isMobileOnline={PresenceStore.isMobileOnline(props.user.id)}
+    channel={props.channel}
+    style={{height:48, width: 200}}
+  />) : (
     <Pressable
       accessibilityRole="button"
       style={style.container}

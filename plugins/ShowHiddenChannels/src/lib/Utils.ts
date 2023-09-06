@@ -1,6 +1,5 @@
-import { common } from "@vendetta/metro";
 import Utils from "@vendetta/utils";
-import { DiscordConstants, ChannelStore } from "./requiredModules";
+import { DiscordConstants, ChannelStore, FluxDispatcher } from "./requiredModules";
 
 
 export const capitalizeFirst = (string) =>
@@ -98,19 +97,19 @@ export const getHiddenChannelRecord = (categories, guildId) => {
 
 export const rerenderChannels = () => {
   const PermissionStoreReset = Utils.findInTree(
-    common.FluxDispatcher,
+    FluxDispatcher,
     (c) =>
       c?.name === "PermissionStore" &&
       c?.actionHandler?.name === "handleConnectionOpen",
     {}
   );
-  PermissionStoreReset.actionHandler();
+  PermissionStoreReset?.actionHandler?.();
   const ChannelListStoreReset = Utils.findInTree(
-    common.FluxDispatcher,
+    FluxDispatcher,
     (c) =>
       c?.name === "ChannelListStore" &&
       c?.actionHandler?.name === "handleReset",
     {}
   );
-  ChannelListStoreReset.actionHandler();
+  ChannelListStoreReset?.actionHandler?.();
 };

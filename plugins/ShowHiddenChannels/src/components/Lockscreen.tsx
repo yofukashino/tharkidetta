@@ -11,6 +11,7 @@ import {
   GuildMemberStore,
   PermissionUtils,
   Parser,
+  GuildMemberRow
 } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import ClickableUser from "./ClickableUser";
@@ -289,7 +290,7 @@ export default React.memo((props: { channel: any; guild: any }) => {
     if (!filteredUserOverwrites?.length)
       return setUserMentionComponents([<Text style={style.none}>None</Text>]);
     const mentionArray = filteredUserOverwrites.map((m: any) => (
-      <ClickableUser user={UserStore.getUser(m.id)} guild={props.guild} />
+      <ClickableUser user={UserStore.getUser(m.id)} guild={props.guild} channel={props.channel} member={GuildMemberStore.getMember(props.guild.id, m.id)} />
     ));
 
     return setUserMentionComponents(mentionArray);

@@ -8,7 +8,7 @@ import { storage } from "@vendetta/plugin";
 import { SVG } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 const { View } = General;
-export default React.memo((props: { height?: number; width?: number }) => {
+export default React.memo((props: { height?: number; width?: number; settings?: boolean; }) => {
   storage.hiddenChannelIcon ??= defaultSettings.hiddenChannelIcon;
   storage.faded ??= defaultSettings.faded;
   const style = stylesheet.createThemedStyleSheet({
@@ -18,7 +18,7 @@ export default React.memo((props: { height?: number; width?: number }) => {
       alignItems: "center",
       marginLeft: 5,
     },
-    svg: {color: storage.faded ? semanticColors?.INTERACTIVE_MUTED : semanticColors?.CHANNELS_DEFAULT}   
+    svg: {color: storage.faded && !props.settings ? semanticColors?.INTERACTIVE_MUTED : semanticColors?.CHANNELS_DEFAULT}   
       
     
   });
