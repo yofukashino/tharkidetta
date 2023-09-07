@@ -16,7 +16,7 @@ export const patchChannelItem = () => {
         "render",
         View,
       function (_args, res) {
-        const channelItem = Utils.findInReactTree(res, (c) => c?.props?.channel  && !c?.props?.channel?.isCategory?.() && c?.props?.isRulesChannel !== null  && c?.props?.channel?.guild_id !== null && typeof c?.type?.type === "function");
+        const channelItem = Utils.findInReactTree(res, (c) => c?.props?.channel  && !c?.props?.channel?.isCategory?.() && c?.props?.isRulesChannel !== null && c?.props?.muted !== null  && c?.props?.channel?.guild_id !== null && typeof c?.type?.type === "function");
         if (typeof channelItem?.type?.type !== "function") {
           return res;
         }             
